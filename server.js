@@ -1,13 +1,38 @@
 var robot = require("kbm-robot");
 
-var app = require('express')();
+var express  = require('express')
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
 
+
+
+var basicAuth = require('basic-auth');
+
+var auth = function (req, res, next) {
+  function unauthorized(res) {
+    res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+    return res.send(401);
+  };
+
+  var user = basicAuth(req);
+
+  if (!user || !user.name || !user.pass) {
+    return unauthorized(res);
+  };
+
+  if (user.name === 'admin' && user.pass === 'SABIN') {
+    return next();
+  } else {
+    return unauthorized(res);
+  };
+};
+
+
 robot.startJar();
 
-app.get('/', function(req, res){
+app.get('/', auth, function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
