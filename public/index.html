@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html><head>
+<title>Bootstrap Resize Layout</title>
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" />
+<link rel="stylesheet" href="bootstrap-vertical-grid.css" />
+<style>
+.container-fixed { border: 1px solid red; }
+.col {
+  border: 1px solid #ccc;
+  text-align: center;
+}
+</style>
+</head><body>
+<div class="container-fixed">
+  <div class="row row-xs-2">
+    <div class="col col-xs-12">North</div>
+  </div><div class="row row-xs-10">
+    <div class="col col-xs-3">West</div>
+    <div class="col col-xs-4">Center</div>
+    <div class="col col-xs-5">East</div>
+  </div><div class="row row-xs-1">
+    <div class="col col-xs-12">South</div>
+  </div>
+</div>
+</body></html>
