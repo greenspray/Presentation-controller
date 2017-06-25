@@ -2,7 +2,7 @@
 var config  = require('./config');
 
 var robot = require("robotjs");
-var express  = require('express')
+var express  = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
@@ -50,16 +50,17 @@ io.on('connection', function(socket){
 	   actionString = "left"
 	  break;
 	}
-	if(actionString != "")
-            robot.keyTap(actionString)
-
-	});
   
- socket.on('disconnect', function() {
-           
-	});
-    
+  if(actionString != "")
+    robot.keyTap(actionString);
+  
   });
+  
+  socket.on('disconnect', function() {           
+    //TODO
+  });
+    
+});
 
 http.listen(port,  function(){
     var address,
@@ -75,5 +76,4 @@ process.stdin.resume();
 process.on('SIGINT', function () {
   console.log('Cleaning up');
   process.exit();
-;
 });
