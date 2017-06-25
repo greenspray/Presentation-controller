@@ -1,13 +1,13 @@
-var robot = require("kbm-robot");
 
+var config  = require('./config');
+
+var robot = require("robotjs");
 var express  = require('express')
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var port = process.env.PORT || 3000;
-
-
-
+var sha1 = require('sha1');
 var basicAuth = require('basic-auth');
 
 var auth = function (req, res, next) {
@@ -22,7 +22,7 @@ var auth = function (req, res, next) {
     return unauthorized(res);
   };
 
-  if (user.name === 'admin' && user.pass === 'SABIN') {
+  if (user.name === config.username  && sha1(user.pass) === config.password) {
     return next();
   } else {
     return unauthorized(res);
@@ -34,10 +34,9 @@ app.get('/', auth, function(req, res){
   res.sendFile(__dirname + '/public/index.html');
 });
 
+
 io.on('connection', function(socket){
   
-  robot.startJar();
-  console.log("Robot server started");
   socket.on('selectedAction', function(data){
 	actionString = ""
 	switch(data){
@@ -52,16 +51,14 @@ io.on('connection', function(socket){
 	  break;
 	}
 	if(actionString != "")
-          robot.press(actionString)
-	       .sleep(20)
-	       .release(actionString)
-	       .go()
-       
+            robot.keyTap(actionString)
+
 	});
   
  socket.on('disconnect', function() {
-	robot.stopJar();
+           
 	});
+    
   });
 
 http.listen(port,  function(){
@@ -77,8 +74,6 @@ process.stdin.resume();
 
 process.on('SIGINT', function () {
   console.log('Cleaning up');
-  if(robot.keypresser)
-     robot.stopJar();
   process.exit();
 ;
 });
