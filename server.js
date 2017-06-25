@@ -13,7 +13,7 @@ var basicAuth = require('basic-auth');
 var auth = function (req, res, next) {
   function unauthorized(res) {
     res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-    return res.send(401);
+    return res.sendStatus(401);
   };
 
   var user = basicAuth(req);
@@ -30,13 +30,14 @@ var auth = function (req, res, next) {
 };
 
 
-robot.startJar();
-
 app.get('/', auth, function(req, res){
   res.sendFile(__dirname + '/public/index.html');
 });
 
 io.on('connection', function(socket){
+  
+  robot.startJar();
+  console.log("Robot server started");
   socket.on('selectedAction', function(data){
 	actionString = ""
 	switch(data){
@@ -70,4 +71,14 @@ http.listen(port,  function(){
     ifaces[dev].filter((details) => details.family === 'IPv4' && details.internal === false ? address = details.address: undefined);
     }
     console.log('Follow  http://%s:%s to start presentation control', address, port);
+});
+
+process.stdin.resume();
+
+process.on('SIGINT', function () {
+  console.log('Cleaning up');
+  if(robot.keypresser)
+     robot.stopJar();
+  process.exit();
+;
 });
